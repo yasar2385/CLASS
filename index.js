@@ -4,7 +4,7 @@ import './style.css';
 // Write Javascript code!
 const appDiv = document.getElementById('app');
 appDiv.innerHTML = `<h1>JS Starter</h1>`;
-var IS_JOURNAL = false;
+var IS_JOURNAL = true;
 class Citation {
   constructor(input) {
     this.ID_ARR = input;
@@ -19,26 +19,36 @@ class Citation {
   SET_NAME_YEAR() {
     try {
       let Obj = {};
-      console.log("Start")
-        Array.from(this.ID_ARR).forEach((id, idx, arr) => {
-            let ID = this.GET_ID(id);
-            let ref = document.getElementById(ID);
-            if (ref) {
-              console.log("Pass")
-                let key_year = ref.querySelector('.year').textContent;
-                let name =  [ref.querySelectorAll('.surname, .anonymous, .collab')].forEach(el => {
-                  return el.textContent
-              });
-              console.log([name])
-              if(!Obj[key_year]) !Obj[key_year] = {};
-              Obj[key_year][ID] = name
-                
-            } else {
-              console.log("falied")
-            }
-        });
-        console.log(Obj)
-            return Obj;
+      console.log('Start');
+      Array.from(this.ID_ARR).forEach((id, idx, arr) => {
+        let ID = this.GET_ID(id);
+        let ref = document.getElementById(ID);
+        if (ref) {
+          console.log('Pass');
+          let key_year = ref.querySelector('.year').textContent;
+          console.log(key_year);
+          let name = Array.from(
+            ref.querySelectorAll('.surname, .anonymous, .collab')
+          ).map((el) => {
+            return el.textContent;
+          });
+          console.log(name);
+          // if(!Obj[key_year]){
+          //    !Obj[key_year] = {};
+          // }
+          if (Obj[key_year]) {
+            console.log('already ther');
+          } else {
+            console.log('first');
+            Obj[key_year] = {};
+          }
+          Obj[key_year] = { ID: name };
+        } else {
+          console.log('falied');
+        }
+      });
+      console.log(Obj);
+      return Obj;
     } catch (err) {
       console.warn(err.message);
       //this.ErrorLogTrace('SET_NAME_YEAR', err.message);
@@ -72,8 +82,7 @@ class Citation {
   // ? setter
 }
 
-var CITE = new Citation(["CIT0001"]);
-
+var CITE = new Citation(['CIT0001']);
 
 //console.log([CITE.getFormat(), CITE.GET_ARR()]);
 // class GET_CHRON_TYPE_1 extends Citation {
@@ -85,8 +94,8 @@ var CITE = new Citation(["CIT0001"]);
 //const FORMAT_1 = new GET_CHRON_TYPE_1('CHRON_TYPE_2');
 //console.log(FORMAT_1.getFormat());
 
-console.log('2009ad' > '2009ac');
-var demo = [...document.querySelectorAll('p')].map(x => {
-  return x.textContent
-})
-console.log(demo);
+// console.log('2009ad' > '2009ac');
+// var demo = [...document.querySelectorAll('p')].map((x) => {
+//   return x.textContent;
+// });
+// console.log(demo);
