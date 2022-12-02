@@ -24,25 +24,21 @@ class Citation {
         let ID = this.GET_ID(id);
         let ref = document.getElementById(ID);
         if (ref) {
-          console.log('Pass');
           let key_year = ref.querySelector('.year').textContent;
-          console.log(key_year);
+          console.log('Pass--' + ID +`---`+ key_year);
           let name = Array.from(
             ref.querySelectorAll('.surname, .anonymous, .collab')
           ).map((el) => {
             return el.textContent;
           });
-          console.log(name);
-          // if(!Obj[key_year]){
-          //    !Obj[key_year] = {};
-          // }
-          if (Obj[key_year]) {
-            console.log('already ther');
-          } else {
-            console.log('first');
+
+          if (!Obj[key_year]) {
             Obj[key_year] = {};
           }
-          Obj[key_year] = { ID: name };
+          if(!Obj[key_year][ID]){
+             Obj[key_year][ID]= {}
+          }
+          Obj[key_year][ID] = name;
         } else {
           console.log('falied');
         }
@@ -82,7 +78,7 @@ class Citation {
   // ? setter
 }
 
-var CITE = new Citation(['CIT0001']);
+var CITE = new Citation(['CIT0036', 'CIT0037', 'CIT0038', 'CIT0039', 'CIT0040', 'CIT0041', 'CIT0042', 'CIT0043', 'CIT0044',"CIT0020"]);
 
 //console.log([CITE.getFormat(), CITE.GET_ARR()]);
 // class GET_CHRON_TYPE_1 extends Citation {
