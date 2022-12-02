@@ -11,6 +11,11 @@ class Citation {
     this.ARR_LIST = this.GET_ARR(this.ID_ARR);
     this.that = this;
     this.NAME_YEAR_LIST = this.SET_NAME_YEAR();
+    this.ASCENT_ORDER = {};
+    this.DECENT_ORDER = {};
+    this.SORTING();
+    // console.log([this.ASCENT_ORDER, this.DECENT_ORDER]);
+    this.GET_CHRON_ASCEND();
   }
   // ? getter
   SET_NAME_YEAR() {
@@ -40,14 +45,42 @@ class Citation {
           console.log('falied');
         }
       });
-      console.log(Obj);
+      // console.log(Obj);
       return Obj;
     } catch (err) {
       console.warn(err.message);
       //this.ErrorLogTrace('SET_NAME_YEAR', err.message);
     }
   }
-  ErrorLogTrace() {}
+  SORTING() {
+    // Get the keys of your "array"
+    let arrayOfKeys = Object.keys(this.NAME_YEAR_LIST);
+    console.log(arrayOfKeys);
+    // We ascent sort it out...
+    let ascent_sortedArray = arrayOfKeys.sort();
+    this.ASCENT_ORDER = ascent_sortedArray;
+    // console.log(ascent_sortedArray);
+    // We decent sort it out...
+    let desent_sortedArray = arrayOfKeys.sort().reverse();
+    this.DECENT_ORDER = desent_sortedArray;
+    //console.log(desent_sortedArray);
+    // [ascent_sortedArray, desent_sortedArray].forEach((order, idx, arr) => {
+    //   order.forEach((e) => {
+    //     this[idx == 0 ? 'ASCENT_ORDER' : 'DECENT_ORDER'][e] =
+    //       this.NAME_YEAR_LIST[e];
+    //   });
+    // });
+    // ascent_sortedArray.forEach((e) => {
+
+    //   console.log(this.NAME_YEAR_LIST[e])
+    //   this.ASCENT_ORDER.push({
+    //     year: e,
+    //   });
+    // });
+    desent_sortedArray.forEach((e) => {
+      //this.DECENT_ORDER[e] = this.NAME_YEAR_LIST[e];
+    });
+  }
   GET_ID(_Id) {
     try {
       //console.log(typeof _Id)
@@ -72,8 +105,16 @@ class Citation {
   getCitation() {
     //console.log(that);
   }
+  GET_NAME_ORDER(Arr) {}
   GET_CHRON_ASCEND() {
     try {
+      var output = [];
+      this.ASCENT_ORDER.forEach((year) => {
+        let Obj = this.NAME_YEAR_LIST[year];
+        for (let x in Obj) {
+          console.log(x);
+        }
+      });
     } catch (err) {
       console.warn(err.message);
       ErrorLogTrace('GET_CHRON_ASCEND', err.message);
