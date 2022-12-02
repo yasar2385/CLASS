@@ -11,9 +11,6 @@ class Citation {
     this.ARR_LIST = this.GET_ARR(this.ID_ARR);
     this.that = this;
     this.NAME_YEAR_LIST = this.SET_NAME_YEAR();
-    //console.log(this.ID_ARR);
-    //console.log(this.NAME_YEAR_LIST);
-    //console.log(this.ARR_LIST);
   }
   // ? getter
   SET_NAME_YEAR() {
@@ -25,7 +22,7 @@ class Citation {
         let ref = document.getElementById(ID);
         if (ref) {
           let key_year = ref.querySelector('.year').textContent;
-          console.log('Pass--' + ID +`---`+ key_year);
+          console.log('Pass--' + ID + `---` + key_year);
           let name = Array.from(
             ref.querySelectorAll('.surname, .anonymous, .collab')
           ).map((el) => {
@@ -35,8 +32,8 @@ class Citation {
           if (!Obj[key_year]) {
             Obj[key_year] = {};
           }
-          if(!Obj[key_year][ID]){
-             Obj[key_year][ID]= {}
+          if (!Obj[key_year][ID]) {
+            Obj[key_year][ID] = {};
           }
           Obj[key_year][ID] = name;
         } else {
@@ -75,10 +72,34 @@ class Citation {
   getCitation() {
     //console.log(that);
   }
-  // ? setter
+  GET_CHRON_ASCEND() {
+    try {
+    } catch (err) {
+      console.warn(err.message);
+      ErrorLogTrace('GET_CHRON_ASCEND', err.message);
+    }
+  }
+  GET_CHRON_DESCAND() {
+    try {
+    } catch (err) {
+      console.warn(err.message);
+      ErrorLogTrace('GET_CHRON_TYPE_2', err.message);
+    }
+  }
 }
 
-var CITE = new Citation(['CIT0036', 'CIT0037', 'CIT0038', 'CIT0039', 'CIT0040', 'CIT0041', 'CIT0042', 'CIT0043', 'CIT0044',"CIT0020"]);
+var CITE = new Citation([
+  'CIT0036',
+  'CIT0037',
+  'CIT0038',
+  'CIT0039',
+  'CIT0040',
+  'CIT0041',
+  'CIT0042',
+  'CIT0043',
+  'CIT0044',
+  'CIT0020',
+]);
 
 //console.log([CITE.getFormat(), CITE.GET_ARR()]);
 // class GET_CHRON_TYPE_1 extends Citation {
