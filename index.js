@@ -98,7 +98,16 @@ class Citation {
     //   })
     // );
   }
-
+  GET_XREF_STRING(item, Options = {}) {
+    return {
+      direct: `<a href="${item.rid}">${
+        Options.onlyYear ? item.year : item.citation_org.direct
+      }</a>`,
+      indirect: `<a href="${item.rid}">${
+        Options.onlyYear ? item.year : item.citation_org.direct
+      }</a>`,
+    };
+  }
   GET_NAME_ORDER(NameArr) {
     let list = [];
     //console.log([NameArr.length, this.config['max-author'], NameArr.length > this.config['max-author']]);
@@ -120,11 +129,51 @@ class Citation {
           indirect: `${name.concat(' ', item.year)}`,
           direct: `${name} (${item.year})`,
         };
-        console.log(rObj);
+        this.ASCENT_ORDER[idx].citation_org = rObj;
+        if (idx != 0) {
+          let IsLastYearSame = item.year == arr[idx - 1].year;
+          let IsLastNameSame = item.nameString == arr[idx - 1].nameString;
+          console.log([item.nameString, arr[idx - 1].nameString]);
+          if (IsLastNameSame && IsLastYearSame) {
+            console.log('NAME-YEAR  SAME -- ' + idx);
+          } else if (IsLastNameSame && !IsLastYearSame) {
+            let prevObj = this.ASCENT_ORDER[idx - 1].citation_org;
+            let prevObjFinal = this.ASCENT_ORDER[idx - 1].citation_finalString;
+            let xref = this.GET_XREF_STRING(item, {
+              onlyYear: true,
+            });
+            //console.log([prevObj.indirect]);
+            // setter for indirect items
+            prevObj.indirect = prevObj.indirect.concat(', ', item.year);
+            prevObjFinal.indirect = prevObjFinal.indirect.concat(
+              ', ',
+              xref.indirect
+            );
+            // setter for direct items
+            let split = prevObj.direct.split('');
+            console.log(split);
+            split.splice(-1, 0, ', ', item.year);
+            prevObj.direct = split.join('');
+            console.log(prevObj);
+            console.log(xref);
+          } else if (
+            (!IsLastNameSame && IsLastYearSame) ||
+            (!IsLastNameSame && !IsLastYearSame)
+          ) {
+            //console.log('YEAR SAME -- ' + idx);
+            this.ASCENT_ORDER[idx].citation_finalString =
+              this.GET_XREF_STRING(item);
+          }
+          //console.log(rObj);
+        } else {
+          //console.log(rObj);
+          this.ASCENT_ORDER[idx].citation_finalString =
+            this.GET_XREF_STRING(item);
+        }
       });
+      console.log(this.ASCENT_ORDER);
     } catch (err) {
-      console.warn(err.message);
-      this.ErrorLogTrace('GET_CHRON_ASCEND', err.message);
+      console.warn('--' + err.message);
     }
   }
   GET_CHRON_DESCAND() {
@@ -204,3 +253,5 @@ let names_arry = [
 names_arry.sort();
 // console.log(names_arry.sort((a, b) => (a > b) - (a < b)));
 // console.log(names_arry.sort());
+let spl = `Olofsson (2014)`.split('');
+console.log(spl.splice(0, 0, '2'));
