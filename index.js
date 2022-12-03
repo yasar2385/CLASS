@@ -150,12 +150,15 @@ class Citation {
               xref.indirect
             );
             // setter for direct items
-            let split = prevObj.direct.split('');
-            console.log(split);
-            split.splice(-1, 0, ', ', item.year);
-            prevObj.direct = split.join('');
+            let split_txt = prevObj.direct.split('');
+            let split_xref = prevObjFinal.direct.split('');
+            split_txt.splice(-1, 0, ', ', item.year);
+            split_xref.splice(-5, 0, ', ', item.year); // xref.indirect
+            // ? txt and xref string combine
+            prevObj.direct = split_txt.join('');
+            prevObjFinal.direct = split_xref.join('');
             console.log(prevObj);
-            console.log(xref);
+            console.log(prevObjFinal);
           } else if (
             (!IsLastNameSame && IsLastYearSame) ||
             (!IsLastNameSame && !IsLastYearSame)
@@ -254,4 +257,9 @@ names_arry.sort();
 // console.log(names_arry.sort((a, b) => (a > b) - (a < b)));
 // console.log(names_arry.sort());
 let spl = `Olofsson (2014)`.split('');
-console.log(spl.splice(0, 0, '2'));
+spl.splice(-1, 0, ', 2015');
+console.log(spl.join(''));
+console.log('-------');
+let spl1 = `<a href="CIT0038">Olofsson (2013)</a>`.split('');
+spl1.splice(-5, 0, ', 2');
+console.log(spl1.join(''));
