@@ -11,20 +11,20 @@ class Citation {
     this.ARR_LIST = this.GET_ARR(this.ID_ARR);
     this.that = this;
     this.NAME_YEAR_LIST = this.SET_NAME_YEAR();
-    this.ASCENT_ORDER = Object.keys(this.NAME_YEAR_LIST).sort();
-    this.DECENT_ORDER = Object.keys(this.NAME_YEAR_LIST).sort().reverse();
+    // this.ASCENT_ORDER = Object.keys(this.NAME_YEAR_LIST).sort();
+    // this.DECENT_ORDER = Object.keys(this.NAME_YEAR_LIST).sort().reverse();
     this.config = {
       etal: 'et al.',
       'max-author': 2,
     };
-    //this.SORTING();
+    this.SORTING();
     // console.log([this.ASCENT_ORDER, this.DECENT_ORDER]);
     this.GET_CHRON_ASCEND();
   }
   // ? getter
   SET_NAME_YEAR() {
     try {
-      let Obj = {};
+      let Obj = [];
       console.log('Start');
       Array.from(this.ID_ARR).forEach((id, idx, arr) => {
         let ID = this.GET_ID(id);
@@ -32,19 +32,18 @@ class Citation {
         if (ref) {
           let key_year = ref.querySelector('.year').textContent;
           //console.log('Pass--' + ID + `---` + key_year);
-          let name = Array.from(
-            ref.querySelectorAll('.surname, .anonymous, .collab')
-          ).map((el) => {
+          let coll = ref.querySelectorAll('.surname, .anonymous, .collab');
+          let name = Array.from(coll).map((el) => {
             return el.textContent;
           });
-
-          if (!Obj[key_year]) {
-            Obj[key_year] = {};
-          }
-          if (!Obj[key_year][ID]) {
-            Obj[key_year][ID] = {};
-          }
-          Obj[key_year][ID] = name;
+          Obj.push({
+            year: key_year,
+            names: name,
+            nameString: name.join(''),
+            rid: ID,
+            collection: coll,
+          });
+          return Obj;
         } else {
           console.log('falied');
         }
@@ -56,61 +55,50 @@ class Citation {
       //this.ErrorLogTrace('SET_NAME_YEAR', err.message);
     }
   }
-  SORTING() {
-    // Get the keys of your "array"
-    let arrayOfKeys = Object.keys(this.NAME_YEAR_LIST);
-    console.log(arrayOfKeys);
-    // We ascent sort it out...
-    let ascent_sortedArray = arrayOfKeys.sort();
-    this.ASCENT_ORDER = arrayOfKeys.sort();
-    console.log(ascent_sortedArray);
-    console.log(this.ASCENT_ORDER);
-    // We decent sort it out...
-    //let desent_sortedArray = arrayOfKeys.sort().reverse();
-    this.DECENT_ORDER = arrayOfKeys.sort().reverse();
-    //console.log(desent_sortedArray);
-    // [ascent_sortedArray, desent_sortedArray].forEach((order, idx, arr) => {
-    //   order.forEach((e) => {
-    //     this[idx == 0 ? 'ASCENT_ORDER' : 'DECENT_ORDER'][e] =
-    //       this.NAME_YEAR_LIST[e];
-    //   });
-    // });
-    // ascent_sortedArray.forEach((e) => {
-
-    //   console.log(this.NAME_YEAR_LIST[e])
-    //   this.ASCENT_ORDER.push({
-    //     year: e,
-    //   });
-    // });
-    //desent_sortedArray.forEach((e) => {
-    //this.DECENT_ORDER[e] = this.NAME_YEAR_LIST[e];
-    //});
-  }
-  GET_ID(_Id) {
+  NAME_SORTING(NameList) {
     try {
-      //console.log(typeof _Id)
-      return !IS_JOURNAL && _Id.toString().indexOf('ref-') == -1
-        ? 'ref-' + _Id
-        : _Id;
-    } catch (err) {
-      console.warn(err.message);
-      ErrorLogTrace('GET_ID', err.message);
-    }
-  }
-
-  getFormat() {
-    return this.ARR;
-  }
-  // ? getter
-  getCitation() {
-    //console.log(that);
-  }
-  GET_ARR(ARR) {
-    try {
-      //console.log(this);
-      return this.ARR.map((x) => x * 2);
+      return NameList.sort(function (a, b) {
+        //console.log([a.year, b.year, a.year == b.year])
+        if (a.year == b.year) {
+          return ('' + a.nameString).localeCompare(b.nameString);
+        } else return 0;
+      });
     } catch {}
   }
+  SORTING() {
+    // ? https://stackoverflow.com/questions/51165/how-to-sort-strings-in-javascript
+    //  https://stackoverflow.com/questions/28560801/javascript-sorting-array-by-multiple-criteria
+
+    // We ascent sort it out...
+    var year_sort1 = this.NAME_YEAR_LIST.sort(function (a, b) {
+      // return a['year'] - b['year'];
+      if (a.year < b.year) return -1;
+      if (a.year > b.year) return 1;
+      return 0;
+    });
+    this.ASCENT_ORDER = this.NAME_SORTING(year_sort1);
+    // We decent sort it out...
+    var year_sort2 = year_sort1.slice(0).reverse();
+    this.DECENT_ORDER = this.NAME_SORTING(year_sort2);
+    //console.log([this.ASCENT_ORDER, this.DECENT_ORDER]);
+    console.log(year_sort1.slice(0));
+    console.log(
+      year_sort1.map(function (a, b) {
+        return a.year;
+      })
+    );
+    // console.log(
+    //   this.DECENT_ORDER.map(function (a, b) {
+    //     return a.year + '--' + a.nameString;
+    //   })
+    // );
+    // console.log(
+    //   this.ASCENT_ORDER.map(function (a, b) {
+    //     return a.year + '--' + a.nameString;
+    //   })
+    // );
+  }
+
   GET_NAME_ORDER(NameArr) {
     let list = [];
     //console.log([NameArr.length, this.config['max-author'], NameArr.length > this.config['max-author']]);
@@ -126,28 +114,52 @@ class Citation {
     try {
       var output = [];
       //console.log(this.ASCENT_ORDER);
-      this.ASCENT_ORDER.forEach((year) => {
-        let Obj = this.NAME_YEAR_LIST[year];
-        for (let x in Obj) {
-          let name = this.GET_NAME_ORDER(Obj[x]);
-          var rObj = {
-            indirect: `${name.concat(' ', year)}`,
-            direct: `${name} (${year})`,
-          };
-          console.log(rObj);
-        }
+      this.ASCENT_ORDER.forEach((item, idx, arr) => {
+        let name = this.GET_NAME_ORDER(item.names);
+        var rObj = {
+          indirect: `${name.concat(' ', item.year)}`,
+          direct: `${name} (${item.year})`,
+        };
+        console.log(rObj);
       });
     } catch (err) {
       console.warn(err.message);
-      ErrorLogTrace('GET_CHRON_ASCEND', err.message);
+      this.ErrorLogTrace('GET_CHRON_ASCEND', err.message);
     }
   }
   GET_CHRON_DESCAND() {
     try {
     } catch (err) {
       console.warn(err.message);
-      ErrorLogTrace('GET_CHRON_TYPE_2', err.message);
+      this.ErrorLogTrace('GET_CHRON_TYPE_2', err.message);
     }
+  }
+  GET_ID(_Id) {
+    try {
+      //console.log(typeof _Id)
+      return !IS_JOURNAL && _Id.toString().indexOf('ref-') == -1
+        ? 'ref-' + _Id
+        : _Id;
+    } catch (err) {
+      console.warn(err.message);
+      this.ErrorLogTrace('GET_ID', err.message);
+    }
+  }
+  ErrorLogTrace(id, msg) {
+    console.log(msg);
+  }
+  getFormat() {
+    return this.ARR;
+  }
+  // ? getter
+  getCitation() {
+    //console.log(that);
+  }
+  GET_ARR(ARR) {
+    try {
+      //console.log(this);
+      return this.ARR.map((x) => x * 2);
+    } catch {}
   }
 }
 
@@ -177,8 +189,18 @@ var CITE = new Citation([
 //const FORMAT_1 = new GET_CHRON_TYPE_1('CHRON_TYPE_2');
 //console.log(FORMAT_1.getFormat());
 
-// console.log('2009ad' > '2009ac');
 // var demo = [...document.querySelectorAll('p')].map((x) => {
 //   return x.textContent;
 // });
 // console.log(demo);
+
+let names_arry = [
+  'YasarAfroze',
+  'AfrozeYasar',
+  'FarzeenAfroze',
+  'YasarArafat',
+  'ArafatAfroze',
+];
+names_arry.sort();
+// console.log(names_arry.sort((a, b) => (a > b) - (a < b)));
+// console.log(names_arry.sort());
