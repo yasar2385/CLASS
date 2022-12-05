@@ -16,9 +16,10 @@ class Citation {
     this.config = {
       etal: 'et al.',
       'max-author': 2,
+      loop_author: 1,
+      // min and max auth to be retain at el stage - 05_DEC_22 - POINT - 02
     };
     this.SORTING();
-    // console.log([this.ASCENT_ORDER, this.DECENT_ORDER]);
     this.GET_CHRON_ASCEND();
     this.getCitation();
   }
@@ -73,6 +74,7 @@ class Citation {
     // We ascent sort it out...
     var year_sort1 = this.NAME_YEAR_LIST.sort(function (a, b) {
       // return a['year'] - b['year'];
+      // TODO YEAR WITH A AND B
       if (a.year < b.year) return -1;
       if (a.year > b.year) return 1;
       return 0;
@@ -225,6 +227,7 @@ class Citation {
         } else null;
       }).filter(Boolean);
       console.log(arr_indirect);
+      document.getElementById('indirect').innerHTML = arr_indirect.join('; ');
       console.log('---end');
       console.log(this);
     } catch (err) {
@@ -286,5 +289,5 @@ spl.splice(-1, 0, ', 2015');
 console.log(spl.join(''));
 
 let spl1 = `<a href="CIT0038">Olofsson (2013)</a>`.split('');
-spl1.splice(-5, 0, ', 2');
+spl1.splice(-5, 0, '</a>, <a>2015</a>');
 console.log(spl1.join(''));
