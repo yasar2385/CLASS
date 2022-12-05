@@ -8,9 +8,9 @@ var IS_JOURNAL = true;
 class Citation {
   constructor(input) {
     this.ID_ARR = input;
-    this.ARR_LIST = this.GET_ARR(this.ID_ARR);
     this.that = this;
     this.NAME_YEAR_LIST = this.SET_NAME_YEAR();
+    this.FINAL_OUT = [];
     // this.ASCENT_ORDER = Object.keys(this.NAME_YEAR_LIST).sort();
     // this.DECENT_ORDER = Object.keys(this.NAME_YEAR_LIST).sort().reverse();
     this.config = {
@@ -20,6 +20,7 @@ class Citation {
     this.SORTING();
     // console.log([this.ASCENT_ORDER, this.DECENT_ORDER]);
     this.GET_CHRON_ASCEND();
+    this.getCitation();
   }
   // ? getter
   SET_NAME_YEAR() {
@@ -81,12 +82,12 @@ class Citation {
     var year_sort2 = year_sort1.slice(0).reverse();
     this.DECENT_ORDER = this.NAME_SORTING(year_sort2);
     //console.log([this.ASCENT_ORDER, this.DECENT_ORDER]);
-    console.log(year_sort1.slice(0));
-    console.log(
-      year_sort1.map(function (a, b) {
-        return a.year;
-      })
-    );
+    // console.log(year_sort1.slice(0));
+    // console.log(
+    //   year_sort1.map(function (a, b) {
+    //     return a.year;
+    //   })
+    // );
     // console.log(
     //   this.DECENT_ORDER.map(function (a, b) {
     //     return a.year + '--' + a.nameString;
@@ -104,7 +105,7 @@ class Citation {
         Options.onlyYear ? item.year : item.citation_org.direct
       }</a>`,
       indirect: `<a href="${item.rid}">${
-        Options.onlyYear ? item.year : item.citation_org.direct
+        Options.onlyYear ? item.year : item.citation_org.indirect
       }</a>`,
     };
   }
@@ -122,7 +123,6 @@ class Citation {
   GET_CHRON_ASCEND() {
     try {
       var output = [];
-      //console.log(this.ASCENT_ORDER);
       this.ASCENT_ORDER.forEach((item, idx, arr) => {
         let name = this.GET_NAME_ORDER(item.names);
         var rObj = {
@@ -133,7 +133,7 @@ class Citation {
         if (idx != 0) {
           let IsLastYearSame = item.year == arr[idx - 1].year;
           let IsLastNameSame = item.nameString == arr[idx - 1].nameString;
-          console.log([item.nameString, arr[idx - 1].nameString]);
+          //console.log([item.nameString, arr[idx - 1].nameString]);
           if (IsLastNameSame && IsLastYearSame) {
             console.log('NAME-YEAR  SAME -- ' + idx);
           } else if (IsLastNameSame && !IsLastYearSame) {
@@ -157,8 +157,8 @@ class Citation {
             // ? txt and xref string combine
             prevObj.direct = split_txt.join('');
             prevObjFinal.direct = split_xref.join('');
-            console.log(prevObj);
-            console.log(prevObjFinal);
+            //console.log(prevObj);
+            //console.log(prevObjFinal);
           } else if (
             (!IsLastNameSame && IsLastYearSame) ||
             (!IsLastNameSame && !IsLastYearSame)
@@ -169,12 +169,13 @@ class Citation {
           }
           //console.log(rObj);
         } else {
-          //console.log(rObj);
+          //console.log(this.GET_XREF_STRING(item));
           this.ASCENT_ORDER[idx].citation_finalString =
             this.GET_XREF_STRING(item);
         }
       });
-      console.log(this.ASCENT_ORDER);
+      //console.log(this.ASCENT_ORDER);
+      //console.log(this);
     } catch (err) {
       console.warn('--' + err.message);
     }
@@ -205,7 +206,30 @@ class Citation {
   }
   // ? getter
   getCitation() {
-    //console.log(that);
+    try {
+      var aarr2 = this.DECENT_ORDER.map(function (a, b) {
+        return a.year + '--' + a.nameString;
+      });
+      console.log('---start');
+      var arr_direct = this.ASCENT_ORDER.map(function (a, b) {
+        let final = a.citation_finalString;
+        if (final) {
+          return final.direct;
+        } else null;
+      }).filter(Boolean);
+      console.log(arr_direct);
+      var arr_indirect = this.ASCENT_ORDER.map(function (a, b) {
+        let final = a.citation_finalString;
+        if (final) {
+          return final.indirect;
+        } else null;
+      }).filter(Boolean);
+      console.log(arr_indirect);
+      console.log('---end');
+      console.log(this);
+    } catch (err) {
+      console.log(err.message);
+    }
   }
   GET_ARR(ARR) {
     try {
@@ -246,6 +270,7 @@ var CITE = new Citation([
 // });
 // console.log(demo);
 
+console.log('-------');
 let names_arry = [
   'YasarAfroze',
   'AfrozeYasar',
@@ -259,7 +284,7 @@ names_arry.sort();
 let spl = `Olofsson (2014)`.split('');
 spl.splice(-1, 0, ', 2015');
 console.log(spl.join(''));
-console.log('-------');
+
 let spl1 = `<a href="CIT0038">Olofsson (2013)</a>`.split('');
 spl1.splice(-5, 0, ', 2');
 console.log(spl1.join(''));
