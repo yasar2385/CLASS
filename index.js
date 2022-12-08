@@ -228,6 +228,7 @@ class Citation {
       }).filter(Boolean);
       console.log(arr_indirect);
       document.getElementById('indirect').innerHTML = arr_indirect.join('; ');
+      document.getElementById('direct').innerHTML = arr_direct.join(', ');
       console.log('---end');
       console.log(this);
     } catch (err) {
@@ -242,18 +243,7 @@ class Citation {
   }
 }
 
-var CITE = new Citation([
-  'CIT0036',
-  'CIT0037',
-  'CIT0038',
-  'CIT0039',
-  'CIT0040',
-  'CIT0041',
-  'CIT0042',
-  'CIT0043',
-  'CIT0044',
-  'CIT0020',
-]);
+var CITE = new Citation(['CIT0032', 'CIT0033']);
 
 //console.log(['Yasar', 'Abu'].filter(Boolean).join(' and '));
 //console.log(['Yasar', ''].filter(Boolean).join(' and '));
